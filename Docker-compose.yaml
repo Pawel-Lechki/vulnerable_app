@@ -1,0 +1,26 @@
+version: "3"
+services:
+  db:
+    image: mysql:latest
+    container_name: vulnerable_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: vulnerable_root_pass
+      MYSQL_DATABASE: vulnerable_app
+      MYSQL_USER: vulnerable_user
+      MYSQL_PASSWORD: vulnerable_user_pass
+    volumes:
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "3317:3306"
+
+  php:
+    build:
+      context: ./php
+      dockerfile: Dockerfile
+    container_name: vulnerable_php
+    volumes:
+      - ./php/www:/var/www/html
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
